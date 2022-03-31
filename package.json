@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "run": "node build.js && node dist/main.js"
+    "run": "node build.js && node dist/main.js",
+    "debug": "node build.js && node --inspect-brk dist/main.js"
   },
   "dependencies": {
     "esbuild": "^0.14.29",
