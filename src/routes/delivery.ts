@@ -8,15 +8,20 @@ const deliveryCreationSchema = {
   type: "object",
   properties: {
     driver_id: { type: "string" },
-    order_accept_time: { type: "string" }, // Timestamp
+    driver_platform: { type: "string" },
+
     customer_name: { type: "string" },
     business_name: { type: "string" },
+
+    order_accept_time: { type: "number" },
+    pickup_time: { type: "number" },
+    dropoff_time: { type: "number" },
+
     base_pay: { type: "number" },
-    order_subtotal: { type: "number" },
     driver_tip: { type: "number" },
-    driver_platform: { type: "string" },
-    pickup_time: { type: "string" }, // Timestamp
-    dropoff_time: { type: "string" }, // Timestamp
+    order_subtotal: { type: "number" },
+
+    miles_traveled: { type: "number" },
   },
 };
 
@@ -29,28 +34,30 @@ const deliveryRoutes: RegisterHandlerFn = (server, _, next) => {
       // this could be avoided if I managed to make the `removeAdditional` option work in AJV
       const {
         driver_id,
-        order_accept_time,
+        driver_platform,
         customer_name,
         business_name,
-        base_pay,
-        order_subtotal,
-        driver_tip,
-        driver_platform,
+        order_accept_time,
         pickup_time,
         dropoff_time,
+        base_pay,
+        driver_tip,
+        order_subtotal,
+        miles_traveled,
       } = req.body;
 
       return deliveryRepository.insert({
         driver_id,
-        order_accept_time,
+        driver_platform,
         customer_name,
         business_name,
-        base_pay,
-        order_subtotal,
-        driver_tip,
-        driver_platform,
+        order_accept_time,
         pickup_time,
         dropoff_time,
+        base_pay,
+        driver_tip,
+        order_subtotal,
+        miles_traveled,
       });
     }
   );
