@@ -2,7 +2,15 @@ import fastify from "fastify";
 import cors from "fastify-cors";
 import { deliveryRoutes, driverRoutes } from "./routes";
 
-const server = fastify({ logger: true });
+const server = fastify({
+  logger: true,
+  ajv: {
+    customOptions: {
+      coerceTypes: false,
+      removeAdditional: true,
+    },
+  },
+});
 
 server.register(cors);
 
