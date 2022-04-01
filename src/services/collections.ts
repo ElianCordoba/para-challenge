@@ -1,5 +1,6 @@
 import { firestore } from "firebase-admin";
 import { BaseRepository } from "./db";
+import { Timestamp as TimestampClass } from "@google-cloud/firestore";
 
 export type Timestamp = firestore.Timestamp;
 type Nominal<brand = string> = string & { __brand: brand };
@@ -8,18 +9,24 @@ type DriverId = Nominal<"driver">;
 
 export interface Delivery {
   id?: string;
+  created_at?: Date;
+  updated_at?: Date;
+
   driver_id: DriverId;
-  order_accept_time: Timestamp;
+  driver_platform: string;
+
   customer_name: string;
   business_name: string;
+
+  order_accept_time: Date;
+  pickup_time: Date;
+  dropoff_time: Date;
+
   base_pay: number;
-  order_subtotal: number;
   driver_tip: number;
-  driver_platform: string;
-  pickup_time: Timestamp;
-  dropoff_time: Timestamp;
-  created_at: Timestamp;
-  updated_at: Timestamp;
+  order_subtotal: number;
+
+  miles_traveled: number;
 }
 
 export class DeliveryRepository extends BaseRepository<Delivery> {
@@ -33,5 +40,38 @@ export class DeliveryRepository extends BaseRepository<Delivery> {
   // to the corresponding repository to encapsulate it and abstract it away from the API
   getAllFromDriver(driverId: string): Promise<Delivery[]> {
     return this.find((q) => q.where("driver_id", "==", driverId));
+  }
+
+  getAllFromDateRange(
+    driverId: string,
+    from: Date,
+    to: Date
+  ): Promise<Delivery[]> {
+    const fromDate = TimestampClass.fromDate(from);
+    const toDate = TimestampClass.fromDate(to);
+
+    return this.find((q) =>
+      q
+        .where("driver_id", "==", driverId)
+        .where("created_at", ">=", fromDate)
+        .where("created_at", "<=", toDate)
+    );
+  }
+}
+
+export interface Driver {
+  id?: string;
+  created_at?: Timestamp;
+  updated_at?: Timestamp;
+
+  first_name: string;
+  last_name: string;
+
+  is_active: boolean;
+}
+
+export class DriverRepository extends BaseRepository<Driver> {
+  constructor() {
+    super("driver");
   }
 }
