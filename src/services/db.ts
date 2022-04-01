@@ -83,6 +83,12 @@ export class BaseRepository<T extends { id?: string }> {
     return this.parseResult(result);
   }
 
+  async update(id: string, update: Partial<T>) {
+    return this.collection
+      .doc(id)
+      .update({ updated_at: timestampNow(), ...update });
+  }
+
   // IMPROVE: Checkout `withConverter`, perhaps this is a solved problem
   private parseResult<T>(result: FirebaseFirestore.QuerySnapshot<T>): T[] {
     if (!result || result.empty) {
