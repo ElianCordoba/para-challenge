@@ -56,6 +56,11 @@ export class BaseRepository<T extends { id?: string }> {
     ];
   }
 
+  async exists(id: string) {
+    const doc = await this.collection.doc(id).get();
+    return doc.exists;
+  }
+
   insert(data: T, options: FirebaseFirestore.SetOptions = {}) {
     const id =
       typeof data.id === "string" && data.id !== ""
@@ -85,7 +90,7 @@ export class BaseRepository<T extends { id?: string }> {
 
   async findById<T>(id: string) {
     const document = await this.collection.doc(id).get();
-    const exists = parseDocument(document);
+    const exists = this.parseDocument(document);
 
     if (!exists) {
       throw {
@@ -114,22 +119,29 @@ export class BaseRepository<T extends { id?: string }> {
       const docExists: any = document?.data();
 
       if (docExists) {
-        for (const timestampProp of this.timestampProperties) {
-          if (
-            docExists[timestampProp] &&
-            docExists[timestampProp] instanceof Timestamp
-          ) {
-            docExists[timestampProp] = docExists[timestampProp].toDate();
-          }
-        }
-        documents.push(docExists);
+        documents.push(this.parseDateProperties(docExists));
       }
     }
 
     return documents;
   }
-}
 
-export function parseDocument<T>(document: Snapshot<T>): T | undefined {
-  return document.data();
+  parseDocument<T>(document: Snapshot<T>): T | undefined {
+    const doc = document.data();
+
+    if (doc) {
+      return this.parseDateProperties(doc);
+    }
+  }
+
+  parseDateProperties(document: any) {
+    const copy = { ...document };
+    for (const timestampProp of this.timestampProperties) {
+      if (copy[timestampProp] && copy[timestampProp] instanceof Timestamp) {
+        copy[timestampProp] = copy[timestampProp].toDate();
+      }
+    }
+
+    return copy;
+  }
 }
