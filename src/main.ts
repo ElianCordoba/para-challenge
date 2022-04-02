@@ -6,7 +6,9 @@ const server = fastify({
   logger: true,
   ajv: {
     customOptions: {
+      // Without this nulls will be converted to zeros, for example
       coerceTypes: false,
+      // TODO: Debug why this doesn't work
       removeAdditional: true,
     },
   },
@@ -14,7 +16,7 @@ const server = fastify({
 
 server.register(cors);
 
-// Root level endpoint registration
+// Root level endpoint registration under the global prefix
 server.register(registerEndpoints, { prefix: "/api/v1" });
 
 const start = async () => {
