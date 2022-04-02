@@ -61,17 +61,19 @@ export class DeliveryRepository extends BaseRepository<Delivery> {
 
 export interface Driver {
   id?: string;
-  created_at?: Timestamp;
-  updated_at?: Timestamp;
+  created_at?: Date;
+  updated_at?: Date;
 
   first_name: string;
   last_name: string;
 
   is_active: boolean;
+  active_hours: number;
+  active_at: Date;
 }
 
 export class DriverRepository extends BaseRepository<Driver> {
   constructor() {
-    super("driver");
+    super("driver", { timestampProperties: ["active_at"] });
   }
 }
