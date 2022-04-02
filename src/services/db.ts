@@ -83,6 +83,19 @@ export class BaseRepository<T extends { id?: string }> {
     return this.parseResult(result);
   }
 
+  async findById<T>(id: string) {
+    const document = await this.collection.doc(id).get();
+    const exists = parseDocument(document);
+
+    if (!exists) {
+      throw {
+        error: `Document with ID ${id} of collection ${this.collectionName} doesn't exist`,
+      };
+    }
+
+    return exists;
+  }
+
   async update(id: string, update: Partial<T>) {
     return this.collection
       .doc(id)
@@ -117,6 +130,6 @@ export class BaseRepository<T extends { id?: string }> {
   }
 }
 
-export function parseDocument<T>(document?: Snapshot<T>): T | undefined {
-  return document?.data();
+export function parseDocument<T>(document: Snapshot<T>): T | undefined {
+  return document.data();
 }
