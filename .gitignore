@@ -5,4 +5,4 @@ package-lock.json
 pnpm-lock.yaml
 
 notes.md
-service-account.json
+# service-account.json
