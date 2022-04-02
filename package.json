@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "run": "node build.js && node dist/main.js",
-    "debug": "node build.js && node --inspect-brk dist/main.js"
+    "debug": "node build.js && node --inspect-brk dist/main.js",
+    "type-check": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "date-fns": "^2.28.0",
