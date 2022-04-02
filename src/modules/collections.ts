@@ -1,18 +1,15 @@
 import { firestore } from "firebase-admin";
-import { BaseRepository } from "./db";
+import { BaseRepository } from "../modules/db";
 import { Timestamp as TimestampClass } from "@google-cloud/firestore";
 
 export type Timestamp = firestore.Timestamp;
-type Nominal<brand = string> = string & { __brand: brand };
-
-type DriverId = Nominal<"driver">;
 
 export interface Delivery {
   id?: string;
   created_at?: Date;
   updated_at?: Date;
 
-  driver_id: DriverId;
+  driver_id: string;
   driver_platform: string;
 
   customer_name: string;
