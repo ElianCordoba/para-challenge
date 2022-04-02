@@ -36,6 +36,10 @@ export type Snapshot<T> = FirebaseFirestore.DocumentSnapshot<T>;
 
 type TimestampProperties<T> = (keyof T)[];
 
+// LOOKHERE: This repository pattern implementation is the one I did on my previous job, it's started as a way
+// to get around firestore's objective bad API and to provide more intellisense, for example, if you are inserting
+// a new Driver, you should get intellisense and typechecking on what you are providing.
+// I also like the added functionality of automatically parse documents (calling .data on snapshots) and converting timestamps into dates
 export class BaseRepository<T> {
   get collection(): Collection<T> {
     return admin.firestore().collection(this.collectionName) as Collection<T>;

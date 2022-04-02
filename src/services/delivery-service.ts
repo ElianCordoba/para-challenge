@@ -3,6 +3,7 @@ import {
   DeliveryRepository,
   DriverRepository,
 } from "../modules/collections";
+import { NotFound } from "../modules/responses";
 
 // TODO: Make an injection service to only instantiate this once
 const deliveryRepository = new DeliveryRepository();
@@ -28,8 +29,10 @@ export async function createDelivery(data: Delivery) {
   const validDriverId = await driverRepository.exists(driver_id);
 
   if (!validDriverId) {
-    // TODO
-    throw {};
+    // LOOKHERE: An example of throwing more information about the error that happened
+    throw NotFound(`There is no driver with id ${driver_id}`, 404, {
+      moreMetadataExample: "foo bar",
+    });
   }
 
   return deliveryRepository.insert({

@@ -109,6 +109,8 @@ export async function getDriverStats(
 
   const deliveries = await deliveryRepository.getAllFromDriver(driverId);
 
+  // React hooks vibes :)
+  // I didn't want to iterate multiple times, thats why I did everything in one loop
   const [daysActive, countDayFn] = calculateStats(startOfDay);
   const [weeksActive, countWeeksFn] = calculateStats(startOfWeek);
   const [monthsActive, countMonth] = calculateStats(startOfMonth);
@@ -165,9 +167,11 @@ function calculateStats(dateFn: (date: Date) => Date) {
       const key = dateFn(delivery.created_at!).toISOString();
       const item = result.get(key) || { utilizationHours: 0, earned: 0 };
 
+      // I use the difference in seconds instead of in hours to get a more precise number, using the hours version
+      // of the function wouldn't take consideration of seconds and minutes
       const utilizationHours =
         Math.abs(
-          differenceInSeconds(delivery.pickup_time, delivery.dropoff_time)
+          differenceInSeconds(delivery.dropoff_time, delivery.pickup_time)
         ) / 3600;
 
       result.set(key, {

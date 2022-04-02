@@ -4,6 +4,10 @@ import { exec } from "../utils";
 import { createDelivery } from "../services/delivery-service";
 import { RegisterHandlerFn } from "../types";
 
+// LOOKHERE: Not particularly happy with this I tried to use a project called typebox to both create the validation and use that
+// schema definition as an interface but I din't managed to make it work :S
+// As mentioned in the readme this is just a simple validation, I would totally add stronger constrains, for example for
+// for driver_platform I would check the value to be part of an enum, or miles_traveled to be more that 0
 const deliveryCreationSchema = {
   type: "object",
   properties: {
