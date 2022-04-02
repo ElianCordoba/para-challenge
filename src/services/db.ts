@@ -101,6 +101,10 @@ export class BaseRepository<T extends { id?: string }> {
     return exists;
   }
 
+  async findAll(): Promise<(T & { id: string })[]> {
+    return this.parseResult(await this.collection.get()) as any;
+  }
+
   async update(id: string, update: Partial<T>) {
     return this.collection
       .doc(id)
