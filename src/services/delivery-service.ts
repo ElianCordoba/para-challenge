@@ -1,4 +1,8 @@
-import { Delivery, DeliveryRepository, DriverRepository } from "./collections";
+import {
+  Delivery,
+  DeliveryRepository,
+  DriverRepository,
+} from "../modules/collections";
 
 // TODO: Make an injection service to only instantiate this once
 const deliveryRepository = new DeliveryRepository();

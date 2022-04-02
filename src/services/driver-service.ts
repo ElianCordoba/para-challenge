@@ -13,7 +13,7 @@ import {
   DeliveryRepository,
   Driver,
   DriverRepository,
-} from "./collections";
+} from "../modules/collections";
 
 const deliveryRepository = new DeliveryRepository();
 const driverRepository = new DriverRepository();

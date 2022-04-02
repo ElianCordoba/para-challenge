@@ -1,4 +1,4 @@
-import { Delivery } from "../services/collections";
+import { Delivery } from "../modules/collections";
 import { createDelivery } from "../services/delivery-service";
 import { RegisterHandlerFn } from "../types";
 
