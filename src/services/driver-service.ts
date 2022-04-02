@@ -14,6 +14,7 @@ import {
   Driver,
   DriverRepository,
 } from "../modules/collections";
+import { NotFound } from "../modules/responses";
 
 const deliveryRepository = new DeliveryRepository();
 const driverRepository = new DriverRepository();
@@ -77,10 +78,7 @@ export async function updateDriverStatus(
     const [driver, error] = await exec(driverRepository.findById(driverId));
 
     if (error) {
-      throw {
-        error: true,
-        message: `Driver with Id ${driverId} was not found `,
-      };
+      throw NotFound(`Driver with Id ${driverId} was not found`);
     }
 
     const hoursDone =
@@ -106,10 +104,7 @@ export async function getDriverStats(
   const [driver, error] = await exec(driverRepository.findById(driverId));
 
   if (error) {
-    throw {
-      error: true,
-      message: { error: `Driver ${driverId} was not found ` },
-    };
+    throw NotFound(`Driver ${driverId} was not found `, 444, { holis: true });
   }
 
   const deliveries = await deliveryRepository.getAllFromDriver(driverId);

@@ -1,4 +1,6 @@
 import { Delivery } from "../modules/collections";
+import { Ok, respondWithError } from "../modules/responses";
+import { exec } from "../utils";
 import { createDelivery } from "../services/delivery-service";
 import { RegisterHandlerFn } from "../types";
 
@@ -27,8 +29,14 @@ const routes: RegisterHandlerFn = (server, _, next) => {
   server.post<{ Body: Delivery }>(
     "/",
     { schema: { body: deliveryCreationSchema } },
-    (req) => {
-      return createDelivery(req.body);
+    async (req, res) => {
+      const [, error] = await exec(createDelivery(req.body));
+
+      if (error) {
+        return respondWithError(res, error);
+      }
+
+      return Ok;
     }
   );
 

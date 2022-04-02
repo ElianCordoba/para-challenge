@@ -9,6 +9,7 @@ import {
 import { exec } from "../utils";
 
 import { RegisterHandlerFn } from "../types";
+import { NotFound, Ok, respondWithError } from "../modules/responses";
 
 const routes: RegisterHandlerFn = (server, _, next) => {
   server.post<{ Body: { first_name: string; last_name: string } }>(
@@ -41,13 +42,13 @@ const routes: RegisterHandlerFn = (server, _, next) => {
       const driverId = req.params.driverId;
 
       if (!isSummaryRequest) {
-        return res.callNotFound();
+        return respondWithError(res, NotFound());
       }
 
       const [result, error] = await exec(getDriverStats(driverId));
 
       if (error) {
-        return res.status(404).send({ error: error.message });
+        return respondWithError(res, error);
       }
 
       return result;
@@ -71,10 +72,10 @@ const routes: RegisterHandlerFn = (server, _, next) => {
     );
 
     if (error) {
-      return res.status(404).send({ error: error.message });
+      return respondWithError(res, error);
     }
 
-    return res.send({ ok: true });
+    return Ok;
   });
 
   server.get<{
