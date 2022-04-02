@@ -1,6 +1,7 @@
 import admin from "firebase-admin";
 
 import { Timestamp } from "@google-cloud/firestore";
+import { NotFound } from "./responses";
 
 const firebaseCredential = admin.credential.cert("service-account.json");
 
@@ -35,7 +36,7 @@ export type Snapshot<T> = FirebaseFirestore.DocumentSnapshot<T>;
 
 type TimestampProperties<T> = (keyof T)[];
 
-export class BaseRepository<T extends { id?: string }> {
+export class BaseRepository<T> {
   get collection(): Collection<T> {
     return admin.firestore().collection(this.collectionName) as Collection<T>;
   }
@@ -61,7 +62,10 @@ export class BaseRepository<T extends { id?: string }> {
     return doc.exists;
   }
 
-  insert(data: T, options: FirebaseFirestore.SetOptions = {}) {
+  insert(
+    data: T & { id?: string },
+    options: FirebaseFirestore.SetOptions = {}
+  ) {
     const id =
       typeof data.id === "string" && data.id !== ""
         ? data.id
@@ -93,9 +97,9 @@ export class BaseRepository<T extends { id?: string }> {
     const exists = this.parseDocument(document);
 
     if (!exists) {
-      throw {
-        error: `Document with ID ${id} of collection ${this.collectionName} doesn't exist`,
-      };
+      throw NotFound(
+        `Document with ID ${id} of collection ${this.collectionName} doesn't exist.`
+      );
     }
 
     return exists;
