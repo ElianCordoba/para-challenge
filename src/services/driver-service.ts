@@ -18,6 +18,16 @@ import {
 const deliveryRepository = new DeliveryRepository();
 const driverRepository = new DriverRepository();
 
+export function createDriver(firstName: string, lastName: string) {
+  return driverRepository.insert({
+    first_name: firstName,
+    last_name: lastName,
+    active_at: new Date(),
+    is_active: true,
+    active_hours: 0,
+  });
+}
+
 export async function getDriverSummary(driverId: string) {
   const dateTo = new Date();
   const dateFrom = subMonths(dateTo, 2);
@@ -59,19 +69,22 @@ export async function updateDriverStatus(
   isActive: boolean,
   stoppedBeingActive: Date
 ) {
-  let update: Partial<Driver> = { is_active: isActive };
+  const update: Partial<Driver> = { is_active: isActive };
 
   // If the driver from active to inactive, we need to calculate the amount of time they were active and store that result
-  // if it's the other way around we set the `active_at` property to later calculate the above mentioned
+  // if the driver is going active we set the `active_at` property to later calculate the above mentioned
   if (!isActive) {
     const [driver, error] = await exec(driverRepository.findById(driverId));
 
     if (error) {
-      return;
+      throw {
+        error: true,
+        message: `Driver with Id ${driverId} was not found `,
+      };
     }
 
     const hoursDone =
-      differenceInSeconds(driver!.active_at, stoppedBeingActive) / 3600;
+      differenceInSeconds(stoppedBeingActive, driver!.active_at) / 3600;
 
     update["active_hours"] = driver!.active_hours + hoursDone;
   } else {
@@ -79,8 +92,6 @@ export async function updateDriverStatus(
   }
 
   await driverRepository.update(driverId, update);
-
-  return { ok: true };
 }
 
 interface DriverStatsResult {
@@ -143,7 +154,7 @@ function addStatsResults(activeHours: number, partialStats: PartialResult) {
     result[date] = {
       activeHours,
       hourlyRate: information.earned / activeHours,
-      utilizationRate: (activeHours * 100) / activeHours,
+      utilizationRate: (activeHours * 100) / information.utilizationHours,
     };
   }
 
