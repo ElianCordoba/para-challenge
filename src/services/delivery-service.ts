@@ -1,9 +1,10 @@
-import { Delivery, DeliveryRepository } from "./collections";
+import { Delivery, DeliveryRepository, DriverRepository } from "./collections";
 
 // TODO: Make an injection service to only instantiate this once
 const deliveryRepository = new DeliveryRepository();
+const driverRepository = new DriverRepository();
 
-export function createDelivery(data: Delivery) {
+export async function createDelivery(data: Delivery) {
   // IMPROVE: Here I explicitly pick the properties to ignore additional data that may be sent in the request body
   // this could be avoided if I managed to make the `removeAdditional` option work in AJV
   const {
@@ -19,6 +20,13 @@ export function createDelivery(data: Delivery) {
     order_subtotal,
     miles_traveled,
   } = data;
+
+  const validDriverId = await driverRepository.exists(driver_id);
+
+  if (!validDriverId) {
+    // TODO
+    throw {};
+  }
 
   return deliveryRepository.insert({
     driver_id,
