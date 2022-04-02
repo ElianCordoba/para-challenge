@@ -25,7 +25,7 @@ const deliveryCreationSchema = {
   },
 };
 
-const deliveryRoutes: RegisterHandlerFn = (server, _, next) => {
+const routes: RegisterHandlerFn = (server, _, next) => {
   server.post<{ Body: Delivery }>(
     "/",
     { schema: { body: deliveryCreationSchema } },
@@ -65,4 +65,4 @@ const deliveryRoutes: RegisterHandlerFn = (server, _, next) => {
   next();
 };
 
-export { deliveryRoutes };
+export { routes };

@@ -1,6 +1,6 @@
 import fastify from "fastify";
 import cors from "fastify-cors";
-import { deliveryRoutes, driverRoutes } from "./routes";
+import { registerEndpoints } from "./routes";
 
 const server = fastify({
   logger: true,
@@ -14,15 +14,8 @@ const server = fastify({
 
 server.register(cors);
 
-server.register(
-  (instance, opts, next) => {
-    instance.register(deliveryRoutes, { prefix: "/delivery" });
-    instance.register(driverRoutes, { prefix: "/driver" });
-
-    next();
-  },
-  { prefix: "/api/v1" }
-);
+// Root level endpoint registration
+server.register(registerEndpoints, { prefix: "/api/v1" });
 
 const start = async () => {
   try {
